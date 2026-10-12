@@ -1,0 +1,60 @@
+apply plugin: "com.android.application"
+apply plugin: "org.jetbrains.kotlin.android"
+apply plugin: "com.facebook.react"
+
+react {}
+
+def enableProguardInReleaseBuilds = false
+
+android {
+    buildToolsVersion rootProject.ext.buildToolsVersion
+    compileSdk rootProject.ext.compileSdkVersion
+
+    namespace "com.cleantext"
+    defaultConfig {
+        applicationId "com.cleantext"
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionCode 1
+        versionName "1.0"
+    }
+
+    buildTypes {
+        debug {
+            // Uses the default Android debug keystore.
+        }
+        release {
+            minifyEnabled enableProguardInReleaseBuilds
+            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = "17"
+    }
+}
+
+dependencies {
+    implementation("com.facebook.react:react-android")
+    implementation("androidx.appcompat:appcompat:1.6.1")
+    implementation("androidx.exifinterface:exifinterface:1.3.7")
+
+    // OpenCV for Android (bundles native libs), min SDK 21.
+    implementation("org.opencv:opencv:4.9.0")
+
+    // Bundled (offline) ML Kit Latin text recognition.
+    implementation("com.google.mlkit:text-recognition:16.0.0")
+
+    if (hermesEnabled.toBoolean()) {
+        implementation("com.facebook.react:hermes-android")
+    } else {
+        implementation("org.webkit:android-jsc:+")
+    }
+}
+
+apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
